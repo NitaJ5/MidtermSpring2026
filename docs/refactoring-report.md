@@ -17,9 +17,7 @@ Moved the following methods from `Main.java` into `CardRules.java`:
 
 Updated `Main.java` to use:
 
-```java
-CardRules.isLegal(...)
-```
+`CardRules.isLegal(...)`
 
 instead of directly handling legality logic.
 
