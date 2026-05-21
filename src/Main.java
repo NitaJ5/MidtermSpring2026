@@ -504,27 +504,113 @@ public class Main {
 
     static void selfTest() {
         int passed = 0;
+
+        // Card parsing
         if (color("R5").equals("R")) passed++; else fail("color R5");
+        if (color("W").equals("")) passed++; else fail("wild has no color");
         if (rank("G+2").equals("DRAW_TWO")) passed++; else fail("rank +2");
-        if (points("W4") == 50) passed++; else fail("wild points");
+        if (rank("YS").equals("SKIP")) passed++; else fail("rank skip");
+        if (rank("BR").equals("REVERSE")) passed++; else fail("rank reverse");
+        if (rank("W").equals("WILD")) passed++; else fail("rank wild");
+        if (rank("W4").equals("WILD_DRAW_FOUR")) passed++; else fail("rank wild draw four");
+        if (number("R7") == 7) passed++; else fail("number R7");
+        if (number("W") == -1) passed++; else fail("wild number");
+
+        // Legal play rules
         if (isLegal("R2", "R9", "")) passed++; else fail("same color");
         if (isLegal("G9", "R9", "")) passed++; else fail("same number");
+        if (isLegal("BS", "YS", "")) passed++; else fail("same action skip");
+        if (isLegal("GR", "BR", "")) passed++; else fail("same action reverse");
+        if (isLegal("Y+2", "G+2", "")) passed++; else fail("same action draw two");
+        if (isLegal("W", "R9", "")) passed++; else fail("wild always legal");
+        if (isLegal("W4", "R9", "")) passed++; else fail("wild draw four always legal");
         if (isLegal("B3", "W", "B")) passed++; else fail("called color");
         if (!isLegal("B3", "R9", "")) passed++; else fail("illegal mismatch");
+        if (!isLegal("B3", "W", "R")) passed++; else fail("wrong called color");
 
+        // Scoring
+        if (points("R5") == 5) passed++; else fail("number points");
+        if (points("YS") == 20) passed++; else fail("skip points");
+        if (points("BR") == 20) passed++; else fail("reverse points");
+        if (points("G+2") == 20) passed++; else fail("draw two points");
+        if (points("W") == 50) passed++; else fail("wild points");
+        if (points("W4") == 50) passed++; else fail("wild draw four points");
+
+        // Bot chooses draw two first if legal
         ArrayList<String> h = new ArrayList<String>();
-        h.add("B3");
         h.add("R4");
+        h.add("R+2");
         h.add("W");
         upCard = "R9";
         calledColor = "";
-        if (chooseBotCard(h) == 1) passed++; else fail("bot normal before wild");
+        if (chooseBotCard(h) == 1) passed++; else fail("bot prefers draw two");
 
+        // Bot chooses skip before number
+        ArrayList<String> hSkip = new ArrayList<String>();
+        hSkip.add("R4");
+        hSkip.add("RS");
+        hSkip.add("W");
+        upCard = "R9";
+        calledColor = "";
+        if (chooseBotCard(hSkip) == 1) passed++; else fail("bot prefers skip before number");
+
+        // Bot chooses number before wild
+        ArrayList<String> hNumber = new ArrayList<String>();
+        hNumber.add("B3");
+        hNumber.add("R4");
+        hNumber.add("W");
+        upCard = "R9";
+        calledColor = "";
+        if (chooseBotCard(hNumber) == 1) passed++; else fail("bot normal before wild");
+
+        // Bot chooses wild if no normal card is legal
+        ArrayList<String> hWild = new ArrayList<String>();
+        hWild.add("B3");
+        hWild.add("G4");
+        hWild.add("W");
+        upCard = "R9";
+        calledColor = "";
+        if (chooseBotCard(hWild) == 2) passed++; else fail("bot chooses wild");
+
+        // Bot draws if nothing is legal
+        ArrayList<String> hNone = new ArrayList<String>();
+        hNone.add("B3");
+        hNone.add("G4");
+        upCard = "R9";
+        calledColor = "";
+        if (chooseBotCard(hNone) == -1) passed++; else fail("bot draws when no legal card");
+
+        // Bot color choice
         ArrayList<String> h2 = new ArrayList<String>();
         h2.add("B1");
         h2.add("B2");
         h2.add("R3");
         if (chooseBotColor(h2).equals("B")) passed++; else fail("bot color");
+
+        // Draw pile behavior
+        deck.clear();
+        discard.clear();
+        deck.add("R5");
+        if (draw().equals("R5")) passed++; else fail("draw removes top card");
+
+        deck.clear();
+        discard.clear();
+        if (draw().equals("W")) passed++; else fail("empty deck fallback wild");
+
+        // Turn movement
+        playerNames.clear();
+        playerNames.add("A");
+        playerNames.add("B");
+        playerNames.add("C");
+        currentPlayer = 0;
+        direction = 1;
+        next();
+        if (currentPlayer == 1) passed++; else fail("next forward");
+
+        currentPlayer = 0;
+        direction = -1;
+        next();
+        if (currentPlayer == 2) passed++; else fail("next backward wrap");
 
         System.out.println("Passed " + passed + " characterization checks.");
     }
