@@ -3,8 +3,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     static ArrayList<String> playerNames = new ArrayList<String>();
     static ArrayList<Boolean> humanPlayers = new ArrayList<Boolean>();
     static ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
@@ -54,6 +57,7 @@ public class Main {
         }
 
         for (int g = 1; g <= games; g++) {
+            LOGGER.info("Game " + g + " started");
             if (!quiet) {
                 System.out.println("\n=== Game " + g + " ===");
             }
@@ -126,6 +130,7 @@ public class Main {
             guard++;
             String name = playerNames.get(currentPlayer);
             ArrayList<String> hand = hands.get(currentPlayer);
+            LOGGER.info("Player turn: " + name);
 
             if (!quiet) {
                 System.out.println("\nUp card: " + upCard + (calledColor.equals("") ? "" : " called " + calledColor));
@@ -145,6 +150,7 @@ public class Main {
                 if (!quiet) {
                     System.out.println(name + " draws " + drawn);
                 }
+                LOGGER.info(name + " drew " + drawn);
                 if (CardRules.isLegal(drawn, upCard, calledColor)) {
                     if (!humanPlayers.get(currentPlayer).booleanValue()) {
                         chosen = hand.size() - 1;
@@ -186,6 +192,7 @@ public class Main {
                 if (!quiet) {
                     System.out.println(name + " plays " + card);
                 }
+                LOGGER.info(name + " played " + card);
 
                 if (card.equals("W") || card.equals("W4")) {
                     if (humanPlayers.get(currentPlayer).booleanValue()) {
@@ -215,6 +222,7 @@ public class Main {
                     if (!quiet) {
                         System.out.println(name + " wins and scores " + points);
                     }
+                    LOGGER.info("Game ended. Winner: " + name + ", score: " + points);
                     return;
                 }
 
@@ -338,6 +346,7 @@ public class Main {
                 }
             }
             System.out.println("Card not found.");
+            LOGGER.warning("Invalid input from player");
         }
     }
 
@@ -358,6 +367,7 @@ public class Main {
                 return "B";
             }
             System.out.println("Bad color.");
+            LOGGER.warning("Invalid color entered");
         }
     }
 
