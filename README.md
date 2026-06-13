@@ -119,3 +119,89 @@ Run the application inside Docker:
 ```bash
 docker run --rm uno-cli
 ```
+## Assignment 5: ORM Persistence For UNO
+
+This project uses SQLite as the local development database and a DAO/repository-style persistence layer.
+
+### Selected Database
+
+SQLite is used for local persistence.
+
+The database file is created automatically when the program runs:
+
+```bash
+uno.db
+```
+
+### Persistence Framework / Mapping Approach
+
+The project uses JDBC with repository/DAO classes:
+
+- persistence.DatabaseManager
+- persistence.GameRepository
+
+Game logic does not contain raw SQL directly. SQL access is handled inside the repository classes.
+
+### Schema
+
+The database contains tables for:
+
+- games
+- players
+- scores
+
+The schema supports storing:
+
+- player names
+- game results
+- winner
+- rounds played
+- per-player scores
+- timestamp
+
+
+Tables are created automatically by calling:
+
+DatabaseManager.initializeDatabase()
+
+### Running Persistence Tests
+
+Run all tests:
+
+```bash
+mvn test
+
+```
+
+The persistence test initializes the database and verifies that game data and scores can be saved.
+
+### Running The Game And Saving History
+
+Run the game normally:
+
+```bash
+java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar
+```
+
+When a game ends, the winner, number of rounds, timestamp, and player scores are saved.
+
+### Viewing Game History And Statistics
+
+List recent games:
+
+```bash
+java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar --recent-games
+```
+
+Show player win counts:
+
+```bash
+java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar --win-counts
+```
+
+Show highest scores:
+
+```bash
+java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar --highest-scores
+```
+
