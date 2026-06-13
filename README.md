@@ -69,3 +69,53 @@ See `docs/rules.html` for the implemented game rules.
 * `docs/midterm-exam.md`: midterm brief
 * `docs/rubric.md`: grading rubric
 * `docs/refactoring-guide.md`: suggested refactoring path
+
+## Assignment 4
+
+### Local Build
+
+Compile the project:
+
+```bash
+mvn compile
+```
+
+### Run Tests
+
+Run all tests:
+
+```bash
+mvn test
+```
+
+### Package Application
+
+Create the executable JAR:
+
+```bash
+mvn package
+```
+
+### Run Application
+
+Run the packaged JAR:
+
+```bash
+java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar
+```
+
+### Docker Build
+
+Build the Docker image:
+
+```bash
+docker build -t uno-cli .
+```
+
+### Docker Run
+
+Run the application inside Docker:
+
+```bash
+docker run --rm uno-cli
+```
