@@ -30,9 +30,8 @@ public class Main {
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
-        boolean showRecentGames = false;
-        boolean showWinCounts = false;
-        boolean showHighestScores = false;
+
+        DatabaseManager.initializeDatabase();
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("--bots") && i + 1 < args.length) {
@@ -45,37 +44,16 @@ public class Main {
                 quiet = true;
             } else if (args[i].equals("--seed") && i + 1 < args.length) {
                 seed = Long.parseLong(args[++i]);
-            } else if (args[i].equals("--recent-games")) {
-                showRecentGames = true;
-            } else if (args[i].equals("--win-counts")) {
-                showWinCounts = true;
-            } else if (args[i].equals("--highest-scores")) {
-                showHighestScores = true;
             } else if (args[i].equals("--self-test")) {
                 selfTest();
                 return;
             } else if (args[i].equals("--help")) {
-                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--human] [--quiet] [--seed N] [--recent-games] [--win-counts] [--highest-scores]");
+                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--human] [--quiet] [--seed N]");
                 return;
             }
         }
 
         random = new Random(seed);
-        DatabaseManager.initializeDatabase();
-        if (showRecentGames) {
-            gameRepository.printRecentGames();
-            return;
-        }
-
-        if (showWinCounts) {
-            gameRepository.printPlayerWinCounts();
-            return;
-        }
-
-        if (showHighestScores) {
-            gameRepository.printHighestScores();
-            return;
-        }
         setupPlayers(bots, human);
 
         if (playerNames.size() < 2 || playerNames.size() > 4) {
@@ -152,13 +130,9 @@ public class Main {
         direction = 1;
         currentPlayer = random.nextInt(playerNames.size());
 
-
         int guard = 0;
-        int roundsPlayed = 0;
-
         while (guard < 3000) {
             guard++;
-            roundsPlayed++;
             String name = playerNames.get(currentPlayer);
             ArrayList<String> hand = hands.get(currentPlayer);
             LOGGER.info("Player turn: " + name);
@@ -250,19 +224,16 @@ public class Main {
                         }
                     }
                     scores[currentPlayer] += points;
-
-                    int gameId = gameRepository.saveGame(name, roundsPlayed);
-                    for (int i = 0; i < playerNames.size(); i++) {
-                        gameRepository.saveScore(gameId, playerNames.get(i), scores[i]);
-                    }
-
                     if (!quiet) {
                         System.out.println(name + " wins and scores " + points);
                     }
-
                     LOGGER.info("Game ended. Winner: " + name + ", score: " + points);
-
+                    int gameId = gameRepository.saveGame(name, 1);
+                    for (int i = 0; i < playerNames.size(); i++) {
+                        gameRepository.saveScore(gameId, playerNames.get(i), scores[i]);
+                    }
                     return;
+
                 }
 
                 if (rank(card).equals("SKIP")) {
