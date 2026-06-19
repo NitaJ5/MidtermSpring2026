@@ -5,9 +5,12 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import persistence.DatabaseManager;
+import persistence.GameRepository;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    static GameRepository gameRepository = new GameRepository();
     static ArrayList<String> playerNames = new ArrayList<String>();
     static ArrayList<Boolean> humanPlayers = new ArrayList<Boolean>();
     static ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
@@ -27,6 +30,8 @@ public class Main {
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
+
+        DatabaseManager.initializeDatabase();
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("--bots") && i + 1 < args.length) {
@@ -223,7 +228,12 @@ public class Main {
                         System.out.println(name + " wins and scores " + points);
                     }
                     LOGGER.info("Game ended. Winner: " + name + ", score: " + points);
+                    int gameId = gameRepository.saveGame(name, 1);
+                    for (int i = 0; i < playerNames.size(); i++) {
+                        gameRepository.saveScore(gameId, playerNames.get(i), scores[i]);
+                    }
                     return;
+
                 }
 
                 if (rank(card).equals("SKIP")) {
