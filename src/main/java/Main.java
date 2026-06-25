@@ -33,7 +33,22 @@ public class Main {
 
         DatabaseManager.initializeDatabase();
 
-        for (int i = 0; i < args.length; i++) {
+        for (String arg : args) {
+            if (arg.equals("--recent-games")) {
+                gameRepository.printRecentGames();
+                return;
+            }
+            if (arg.equals("--win-counts")) {
+                gameRepository.printPlayerWinCounts();
+                return;
+            }
+            if (arg.equals("--highest-scores")) {
+                gameRepository.printHighestScores();
+                return;
+            }
+        }
+
+               for (int i = 0; i < args.length; i++) {
             if (args[i].equals("--bots") && i + 1 < args.length) {
                 bots = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--games") && i + 1 < args.length) {
@@ -48,10 +63,11 @@ public class Main {
                 selfTest();
                 return;
             } else if (args[i].equals("--help")) {
-                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--human] [--quiet] [--seed N]");
+                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--human] [--quiet] [--seed N] [--recent-games] [--win-counts] [--highest-scores]");
                 return;
             }
         }
+
         if (quiet) {
             LOGGER.setLevel(Level.WARNING);
             Logger.getLogger("").setLevel(Level.WARNING);
