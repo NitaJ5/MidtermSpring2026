@@ -112,6 +112,7 @@ public class Main {
     }
 
     static void playGame() {
+        int roundNumber = 1;
         deck.clear();
         String[] colors = {"R", "Y", "G", "B"};
         for (int c = 0; c < colors.length; c++) {
@@ -251,7 +252,7 @@ public class Main {
 
                     int winnerPlayerId = gameRepository.findOrCreatePlayer(name);
                     int gameId = gameRepository.saveGame(winnerPlayerId);
-                    gameRepository.saveRound(gameId, 1, winnerPlayerId);
+                    gameRepository.saveRound(gameId, roundNumber, winnerPlayerId);
 
                     for (int i = 0; i < playerNames.size(); i++) {
                         int playerId = gameRepository.findOrCreatePlayer(playerNames.get(i));
