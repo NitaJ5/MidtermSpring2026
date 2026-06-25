@@ -131,7 +131,7 @@ docker run --rm uno-cli --bots 3 --games 5 --quiet
 
 ## Assignment 5: ORM Persistence For UNO
 
-This project uses SQLite as the local development database and a DAO/repository-style persistence layer.
+This project uses SQLite as the local development database and MyBatis as the persistence mapper framework.
 
 ### Selected Database
 
@@ -145,8 +145,7 @@ uno.db
 
 ### Persistence Framework / Mapping Approach
 
-The project uses JDBC with repository/DAO classes:
-
+The project uses MyBatis mapper interfaces with SQLite:
 - persistence.DatabaseManager
 - persistence.GameRepository
 
@@ -192,8 +191,7 @@ Run the game normally:
 java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar
 ```
 
-When a game ends, the winner, number of rounds, timestamp, and player scores are saved.
-
+When a game ends, player records, game information, rounds, and scores are persisted in the normalized SQLite schema using MyBatis.
 ### Viewing Game History And Statistics
 
 List recent games:
