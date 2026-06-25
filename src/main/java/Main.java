@@ -231,11 +231,17 @@ public class Main {
                     if (!quiet) {
                         System.out.println(name + " wins and scores " + points);
                     }
-                    LOGGER.info("Game ended. Winner: " + name + ", score: " + points);
-                    int gameId = gameRepository.saveGame(name, 1);
+                                                         LOGGER.info("Game ended. Winner: " + name + ", score: " + points);
+
+                    int winnerPlayerId = gameRepository.findOrCreatePlayer(name);
+                    int gameId = gameRepository.saveGame(winnerPlayerId);
+                    gameRepository.saveRound(gameId, 1, winnerPlayerId);
+
                     for (int i = 0; i < playerNames.size(); i++) {
-                        gameRepository.saveScore(gameId, playerNames.get(i), scores[i]);
+                        int playerId = gameRepository.findOrCreatePlayer(playerNames.get(i));
+                        gameRepository.saveScore(gameId, playerId, scores[i]);
                     }
+
                     return;
 
                 }
