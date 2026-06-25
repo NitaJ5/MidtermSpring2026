@@ -106,6 +106,9 @@ java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar
 
 ### Docker Build
 
+The Dockerfile uses a multi-stage build. The build stage uses Maven to compile and package the application from `pom.xml` and `src`. The runtime stage copies the generated JAR from the build stage, allowing the image to be built from a clean checkout without requiring a local `target` directory.
+
+
 Build the Docker image:
 
 ```bash
@@ -119,6 +122,13 @@ Run the application inside Docker:
 ```bash
 docker run --rm uno-cli
 ```
+
+Run quiet bot games:
+
+```bash
+docker run --rm uno-cli --bots 3 --games 5 --quiet
+```
+
 ## Assignment 5: ORM Persistence For UNO
 
 This project uses SQLite as the local development database and a DAO/repository-style persistence layer.
@@ -170,7 +180,6 @@ Run all tests:
 
 ```bash
 mvn test
-
 ```
 
 The persistence test initializes the database and verifies that game data and scores can be saved.

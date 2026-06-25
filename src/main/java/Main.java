@@ -52,6 +52,10 @@ public class Main {
                 return;
             }
         }
+        if (quiet) {
+            LOGGER.setLevel(Level.WARNING);
+            Logger.getLogger("").setLevel(Level.WARNING);
+        }
 
         random = new Random(seed);
         setupPlayers(bots, human);
