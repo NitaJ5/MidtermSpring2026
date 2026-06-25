@@ -21,6 +21,16 @@ public class GameRepositoryTest {
         }
 
         DatabaseManager.initializeDatabase();
+        try (var conn = DatabaseManager.getConnection();
+             var stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM scores");
+            stmt.executeUpdate("DELETE FROM rounds");
+            stmt.executeUpdate("DELETE FROM games");
+            stmt.executeUpdate("DELETE FROM players");
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         repo = new GameRepository();
     }
 
@@ -59,7 +69,6 @@ public class GameRepositoryTest {
         repo.saveRound(gameId, 1, bot1);
 
         String output = captureOutput(() -> repo.printPlayerWinCounts());
-
         assertTrue(output.contains("Bot1"));
         assertTrue(output.contains("1 wins"));
     }
