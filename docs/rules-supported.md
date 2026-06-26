@@ -4,6 +4,18 @@ This project implements a text-based UNO game using the local final project rule
 
 ## Implemented Rules
 
+### Basic Turn Flow
+
+Implemented.
+
+Each player starts with seven cards. One card is placed face-up as the starting discard card.
+
+On a turn, a player may play a legal card. If no legal card is played, the player draws one card. If the drawn card is legal, the player may play it immediately. Otherwise, the turn passes.
+
+Implementation note:
+
+If the initial discard card is a Wild or Wild Draw Four card, it is discarded and another card is drawn until a non-wild starting card is selected. Action cards such as Skip, Reverse and Draw Two may still be used as the initial discard.
+
 ### Deck Composition
 
 Implemented.
@@ -81,11 +93,13 @@ If the drawn card is not played, the turn passes.
 
 Implemented.
 
-When a player has one card left, the game detects the one-card state.
+When a player plays a card and their hand becomes exactly one card, the game detects the one-card state immediately after that card is played.
 
 Bots call UNO automatically.
 
-Human players are prompted to call UNO. If the human player does not call UNO, the player draws two penalty cards.
+Human players are prompted immediately after reaching one card. If the human player does not answer `y`, `yes`, or `uno`, the missed-UNO penalty is applied immediately.
+
+The missed-UNO penalty is drawing two cards.
 
 ### Round End
 
