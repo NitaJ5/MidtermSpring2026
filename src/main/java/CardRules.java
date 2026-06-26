@@ -58,6 +58,35 @@ public class CardRules {
         }
         return false;
     }
+    public static java.util.List<String> createDeck() {
+        java.util.List<String> deck = new java.util.ArrayList<>();
+        String[] colors = {"R", "Y", "G", "B"};
 
+        for (String color : colors) {
+            deck.add(color + "0");
 
+            for (int copy = 0; copy < 2; copy++) {
+                for (int number = 1; number <= 9; number++) {
+                    deck.add(color + number);
+                }
+                deck.add(color + "S");
+                deck.add(color + "R");
+                deck.add(color + "+2");
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            deck.add("W");
+            deck.add("W4");
+        }
+
+        return deck;
+    }
+    public static boolean needsUnoCall(int handSize) {
+        return handSize == 1;
+    }
+
+    public static int missedUnoPenaltyCards() {
+        return 2;
+    }
 }

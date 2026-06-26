@@ -212,3 +212,29 @@ Show highest scores:
 java -jar target/midterm-spring-2026-1.0-SNAPSHOT.jar --highest-scores
 ```
 
+## Final Project: Full UNO Product
+
+This final project extends the UNO CLI into a fuller UNO product.
+
+### Final Project Features
+
+Implemented rules include:
+
+- correct 108-card UNO deck composition
+- legal play validation
+- Skip
+- Reverse
+- Draw Two
+- Wild
+- Wild Draw Four
+- draw/pass behavior
+- UNO call and missed-UNO penalty
+- round scoring
+- multi-round game to target score
+
+### Final Project Commands
+
+Run tests:
+
+```bash
+mvn test

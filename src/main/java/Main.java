@@ -21,13 +21,14 @@ public class Main {
     static int direction = 1;
     static String upCard = "";
     static String calledColor = "";
+    static boolean[] unoCalled = new boolean[10];
     static boolean quiet = false;
     static Random random = new Random();
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         int bots = 3;
-        int games = 1;
+        int games = Integer.MAX_VALUE;        int targetScore = 500;
         boolean human = false;
         long seed = System.currentTimeMillis();
 
@@ -53,6 +54,8 @@ public class Main {
                 bots = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--games") && i + 1 < args.length) {
                 games = Integer.parseInt(args[++i]);
+            } else if (args[i].equals("--target") && i + 1 < args.length) {
+                targetScore = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--human")) {
                 human = true;
             } else if (args[i].equals("--quiet")) {
@@ -63,7 +66,7 @@ public class Main {
                 selfTest();
                 return;
             } else if (args[i].equals("--help")) {
-                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--human] [--quiet] [--seed N] [--recent-games] [--win-counts] [--highest-scores]");
+                System.out.println("Usage: scripts/run.sh [--bots N] [--games N] [--target N] [--human] [--quiet] [--seed N] [--recent-games] [--win-counts] [--highest-scores]");
                 return;
             }
         }
@@ -81,12 +84,14 @@ public class Main {
             return;
         }
 
-        for (int g = 1; g <= games; g++) {
-            LOGGER.info("Game " + g + " started");
+        int round = 1;
+        while (round <= games && highestScore() < targetScore) {
+            LOGGER.info("Round " + round + " started");
             if (!quiet) {
-                System.out.println("\n=== Game " + g + " ===");
+                System.out.println("\n=== Round " + round + " ===");
             }
             playGame();
+            round++;
         }
 
         System.out.println("\nFinal scores:");
@@ -114,24 +119,7 @@ public class Main {
     static void playGame() {
         int roundNumber = 1;
         deck.clear();
-        String[] colors = {"R", "Y", "G", "B"};
-        for (int c = 0; c < colors.length; c++) {
-            deck.add(colors[c] + "0");
-            for (int n = 1; n <= 9; n++) {
-                deck.add(colors[c] + n);
-                deck.add(colors[c] + n);
-            }
-            deck.add(colors[c] + "S");
-            deck.add(colors[c] + "S");
-            deck.add(colors[c] + "R");
-            deck.add(colors[c] + "R");
-            deck.add(colors[c] + "+2");
-            deck.add(colors[c] + "+2");
-        }
-        for (int i = 0; i < 4; i++) {
-            deck.add("W");
-            deck.add("W4");
-        }
+        deck.addAll(CardRules.createDeck());
         Collections.shuffle(deck, random);
         discard.clear();
         for (int i = 0; i < hands.size(); i++) {
@@ -148,6 +136,7 @@ public class Main {
             upCard = draw();
         }
         calledColor = "";
+        java.util.Arrays.fill(unoCalled, false);
         direction = 1;
         currentPlayer = random.nextInt(playerNames.size());
 
@@ -231,8 +220,33 @@ public class Main {
                     }
                 }
 
-                if (hand.size() == 1 && !quiet) {
-                    System.out.println(name + " says UNO!");
+                if (CardRules.needsUnoCall(hand.size())) {
+                    boolean calledUno = true;
+
+                    if (humanPlayers.get(currentPlayer).booleanValue()) {
+                        System.out.print("Call UNO? y/n: ");
+                        String unoAnswer = scanner.nextLine().trim();
+                        calledUno = unoAnswer.equalsIgnoreCase("y")
+                                || unoAnswer.equalsIgnoreCase("yes")
+                                || unoAnswer.equalsIgnoreCase("uno");
+                    }
+
+                    unoCalled[currentPlayer] = calledUno;
+
+                    if (calledUno) {
+                        if (!quiet) {
+                            System.out.println(name + " says UNO!");
+                        }
+                    } else {
+                        int penalty = CardRules.missedUnoPenaltyCards();
+                        for (int i = 0; i < penalty; i++) {
+                            hand.add(draw());
+                        }
+
+                        if (!quiet) {
+                            System.out.println(name + " missed UNO and draws " + penalty + " cards.");
+                        }
+                    }
                 }
 
                 if (hand.size() == 0) {
@@ -512,6 +526,15 @@ public class Main {
             }
         }
         return out;
+    }
+    static int highestScore() {
+        int highest = 0;
+        for (int i = 0; i < playerNames.size(); i++) {
+            if (scores[i] > highest) {
+                highest = scores[i];
+            }
+        }
+        return highest;
     }
 
     static void selfTest() {
