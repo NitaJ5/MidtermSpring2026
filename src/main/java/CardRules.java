@@ -89,4 +89,29 @@ public class CardRules {
     public static int missedUnoPenaltyCards() {
         return 2;
     }
+    public static boolean drawnCardMayBePlayed(String drawnCard, String upCard, String calledColor) {
+        return isLegal(drawnCard, upCard, calledColor);
+    }
+
+    public static boolean mustPassAfterDrawing(String drawnCard, String upCard, String calledColor) {
+        return !drawnCardMayBePlayed(drawnCard, upCard, calledColor);
+    }
+
+    public static int cardPoints(String card) {
+        String r = rank(card);
+        if (r.equals("NUMBER")) {
+            return number(card);
+        }
+        if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) {
+            return 20;
+        }
+        if (r.equals("WILD") || r.equals("WILD_DRAW_FOUR")) {
+            return 50;
+        }
+        return 0;
+    }
+
+    public static boolean reachedTargetScore(int score, int targetScore) {
+        return score >= targetScore;
+    }
 }

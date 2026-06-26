@@ -494,17 +494,7 @@ public class Main {
     }
 
     static int points(String card) {
-        String r = rank(card);
-        if (r.equals("NUMBER")) {
-            return number(card);
-        }
-        if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) {
-            return 20;
-        }
-        if (r.equals("WILD") || r.equals("WILD_DRAW_FOUR")) {
-            return 50;
-        }
-        return 0;
+        return CardRules.cardPoints(card);
     }
 
     static void next() {
